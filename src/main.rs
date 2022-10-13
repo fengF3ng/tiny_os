@@ -1,9 +1,20 @@
+// src/main.rs
 #![no_std]
 #![no_main]
 
-use core::panic::PanicInfo;
+#![feature(custom_test_frameworks)]
+#![test_runner(tiny_os::test_runner)]
 
-static HELLO: &[u8] = br#"
+#![reexport_test_harness_main = "test_main"]
+
+use core::panic::PanicInfo;
+use tiny_os::println;
+
+// mod vga_buffer;
+// mod serial;
+
+
+static HELLO: &'static str = r#"
 \
  \
     _~^~^~_
@@ -14,19 +25,24 @@ static HELLO: &[u8] = br#"
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    let vga_buffer = 0xb8000 as *mut u8;
-
-    for (i, &byte) in HELLO.iter().enumerate() {
-        unsafe {
-            *vga_buffer.offset(i as isize * 2) = byte;
-            *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
-        }
-    }
+    println!("Hello Wrold!\n{}:$", "root");
+    
+    #[cfg(test)]
+    test_main();
 
     loop{}
 }
 
+
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
+    println!("{}", _info);
     loop{}
+}
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(_info: &PanicInfo) -> ! {
+    tiny_os::test_panic_handler(_info);
 }

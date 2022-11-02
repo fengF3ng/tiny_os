@@ -27,10 +27,18 @@ static HELLO: &'static str = r#"
 pub extern "C" fn _start() -> ! {
     println!("Hello Wrold!\n{}:$", "root");
     
+    tiny_os::init();
+
+    //x86_64::instructions::interrupts::int3();
+
+    // unsafe {
+    //     *(0xdeadbeef as *mut u64) = 42;
+    // }
+
     #[cfg(test)]
     test_main();
 
-    loop{}
+    tiny_os::hlt_loop();
 }
 
 
@@ -38,7 +46,7 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     println!("{}", _info);
-    loop{}
+    tiny_os::hlt_loop();
 }
 
 #[cfg(test)]

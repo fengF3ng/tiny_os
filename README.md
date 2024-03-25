@@ -3,6 +3,14 @@
 - arch: x86_64
 - language: RUST
 
+# todo
+
+- [ ] APIC
+- [ ] USB for Keyboard
+- [ ] Control Key for keyboard
+- [ ] should_panic!
+
+
 # 参考
 
 - [ferris-says](https://github.com/mgattozzi/ferris-says)
